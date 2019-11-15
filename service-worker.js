@@ -4,6 +4,7 @@ let urlToCache = [
     '/',
     '/index.html',
     '/manifest.json',
+    '/push.js',
     '/partials/nav.html',
     '/pages/klasemen.html',
     '/pages/favorit.html',
@@ -82,7 +83,7 @@ const serveApiData = (request, requestUrl) => {
                 return response;
             }
 
-            
+
             return fetch(request).then(networkResponse => {
                 cache.put(requestUrl, networkResponse.clone());
                 return networkResponse;
@@ -90,6 +91,27 @@ const serveApiData = (request, requestUrl) => {
         });
     });
 };
+
+self.addEventListener('push', function(event) {
+    var body;
+    if (event.data) {
+        body = event.data.text();
+    } else {
+        body = 'Push message no payload';
+    }
+    var options = {
+        body: body,
+        icon: 'assets/img/icon.png',
+        vibrate: [100, 50, 100],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: 1
+        }
+    };
+    event.waitUntil(
+        self.registration.showNotification('Push Notification', options)
+    );
+});
 
 self.addEventListener('message', event => {
     if (event.data.action === 'skipWaiting') {

@@ -1,3 +1,89 @@
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        registerServiceWorker();
+    });
+} else {
+    console.log("ServiceWorker belum didukung browser ini.");
+}
+
+function registerServiceWorker() {
+    navigator.serviceWorker
+        .register("/service-worker.js")
+        .then(function(reg) {
+            var serviceWorker;
+            if (reg.installing) {
+                serviceWorker = reg.installing;
+                console.log('Service worker installing');
+            }
+
+            if (reg.waiting) {
+                serviceWorker = reg.waiting;
+                console.log('Service worker installed & waiting');
+            }
+
+            if (reg.active) {
+                serviceWorker = reg.active;
+                console.log('Service worker active');
+            }
+
+            if (serviceWorker) {
+                serviceWorker.addEventListener("statechange", function(e) {
+                    console.log("sw statechange : ", e.target.state);
+                    if (e.target.state == "activated") {
+                        requestPermission();
+                    }
+                });
+            }
+        })
+        .catch(function() {
+            console.log("Pendaftaran ServiceWorker gagal");
+        });
+}
+
+function requestPermission() {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(function(result) {
+            if (result === "denied") {
+                console.log("Fitur notifikasi tidak diijinkan.");
+                return;
+            } else if (result === "default") {
+                console.error("Pengguna menutup kotak dialog permintaan ijin.");
+                return;
+            }
+
+            if (('PushManager' in window)) {
+                function urlBase64ToUint8Array(base64String) {
+                    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+                    const base64 = (base64String + padding)
+                        .replace(/-/g, '+')
+                        .replace(/_/g, '/');
+                    const rawData = window.atob(base64);
+                    const outputArray = new Uint8Array(rawData.length);
+                    for (let i = 0; i < rawData.length; ++i) {
+                        outputArray[i] = rawData.charCodeAt(i);
+                    }
+                    return outputArray;
+                }
+
+                navigator.serviceWorker.getRegistration().then(function(registration) {
+                    registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array("BAGew-KfjcFRNiHGKB8jJ9YZbOdk1Pu-MnlFdWI4T5t7edbkBG4WjTzRLnzYzLvL2jEUGCN-62qMM7Hhg9APB8Q")
+                    }).then(function(subscribe) {
+                        console.log('Berhasil melakukan subscribe dengan endpoint: ', subscribe.endpoint);
+                        console.log('Berhasil melakukan subscribe dengan p256dh key: ', btoa(String.fromCharCode.apply(
+                            null, new Uint8Array(subscribe.getKey('p256dh')))));
+                        console.log('Berhasil melakukan subscribe dengan auth key: ', btoa(String.fromCharCode.apply(
+                            null, new Uint8Array(subscribe.getKey('auth')))));
+                    }).catch(function(e) {
+                        console.error('Tidak dapat melakukan subscribe ', e.message);
+                    });
+                });
+            }
+        });
+    }
+}
+
 async function loadStandings() {
     await renderStandings();
     initDB();
@@ -188,7 +274,7 @@ async function renderFavoritesPage() {
                     </tr>
                 `;
             });
-        }else{
+        } else {
             html = `
             <tr>
                 <td colspan="2">There's no favorites team</td>

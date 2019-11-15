@@ -1,5 +1,6 @@
 {
     "name": "Premiere League",
+    "gcm_sender_id": "554736624547",
     "short_name": "PL",
     "description": "Klasemen Liga Inggris musim 2021",
     "start_url": "/index.html",
