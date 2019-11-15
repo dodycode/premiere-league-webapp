@@ -1,5 +1,6 @@
 async function loadStandings() {
     await renderStandings();
+    initDB();
 }
 
 async function loadDataFromCaches(proxy, base_url){
@@ -53,6 +54,7 @@ async function renderStandings() {
 async function loadTeamPage(teamId) {
     await renderTeamPage();
     await renderTeamInfo(teamId);
+    await loadFav(teamId);
     toggleFav(teamId);
 }
 
@@ -78,10 +80,10 @@ async function renderTeamInfo(teamId) {
         let elem = document.querySelector('#detail-info');
         elem.innerHTML = `
             <div class="detail-logo-wrapper">
-                <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}">
+                <img id="team-img" src="${teamUrl.replace(/^http:\/\//i, 'https://')}">
             </div>
             <div class="detail-logo-info">
-                <h1>${teamData.name}</h1>
+                <h1 id="team-title">${teamData.name}</h1>
                 <p>${teamData.address}</p>
                 <p>${teamData.phone}</p>
                 <p><a href="${teamData.website != null ? teamData.website : '#klasemen'}" target="_blank">Official Website</a></p>
@@ -96,12 +98,16 @@ async function renderTeamInfo(teamId) {
         let squadHtml = '';
         let squads = teamData.squad;
         Object.keys(squads).forEach((squad, index) => {
+            let squadDateUTC = new Date(squads[squad].dateOfBirth);
+            let Day = squadDateUTC.getDate();
+            let Month = squadDateUTC.getMonth() + 1;
+            let FullYear = squadDateUTC.getFullYear();
             squadHtml += `
                 <tr>
                     <td>${index + 1}</td>
                     <td>${squads[squad].name}</td>
                     <td>${squads[squad].position}</td>
-                    <td>${squads[squad].dateOfBirth}</td>
+                    <td>${Month + '-' + Day + '-' + FullYear}</td>
                     <td>${squads[squad].countryOfBirth}</td>
                     <td>${squads[squad].nationality}</td>
                 </tr>
@@ -116,16 +122,46 @@ async function renderTeamInfo(teamId) {
     }
 }
 
-function toggleFav(teamId) {
-    var elemIcon = document.querySelector('.fav-icon');
-    var elemBtn = document.querySelector('.btn-team');
-    elemBtn.onclick = (e) => {
-        if (elemIcon.innerHTML != 'favorite') {
-            elemIcon.innerHTML = 'favorite';
-        } else {
-            elemIcon.innerHTML = 'favorite_border';
-        }
+async function loadFav(teamIdFav) {
+    let elemIcon = document.querySelector('.fav-icon');
+    let toggleBtn = document.querySelector('.btn-team');
+    let status = false;
+    let findedData = await countDataInDB(teamIdFav);
+    console.log(findedData);
+    if (findedData < 1) {
+        //tidak ada di list favorite, maka..
+        elemIcon.innerHTML = 'favorite_border';
+        toggleBtn.classList.remove('red');
+        status = true;
+    }else{
+        //ada di list fav, maka..
+        elemIcon.innerHTML = 'favorite';
+        toggleBtn.classList.add('red');
+        status = false;
+    }
+    return status;
+}
 
-        elemBtn.classList.toggle('red');
+async function toggleFav(teamId) {
+    let toggleIcon = document.querySelector('.fav-icon');
+    let toggleBtn = document.querySelector('.btn-team');
+    let teamTitle = document.querySelector('#team-title').innerHTML;
+    let teamLogo = document.querySelector('#team-img').getAttribute('src');
+    let favTeamId = teamId
+    toggleBtn.onclick = async (e) => {
+        let check = await loadFav(favTeamId);
+        if (check) {
+            await createDataToDB({
+                teamId: favTeamId,
+                teamLogo: teamLogo,
+                teamTitle: teamTitle
+            });
+            toggleIcon.innerHTML = 'favorite';
+            toggleBtn.classList.add('red');
+        }else{
+            await deleteDataFromDB(favTeamId);
+            toggleIcon.innerHTML = 'favorite_border';
+            toggleBtn.classList.remove('red');
+        }
     }
 }

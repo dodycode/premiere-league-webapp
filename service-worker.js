@@ -14,6 +14,8 @@ let urlToCache = [
     '/assets/js/api.js',
     '/assets/js/app.js',
     '/assets/js/nav.js',
+    '/assets/js/dbhelper.js',
+    '/assets/js/idb.js',
     '/assets/img/icon.png'
 ];
 
