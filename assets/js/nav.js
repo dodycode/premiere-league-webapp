@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             break;
 
                         case 'favorit':
-                            //TODO: teams
+                            loadFavoritesPage();
                             break;
                     }
                 } else if (this.status == 404) {

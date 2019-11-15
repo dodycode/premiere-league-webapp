@@ -9,7 +9,17 @@ function initDB() {
 
 function getAllDataFromDB(key) {
     let dbPromise = initDB();
-    return dbPromise.get('favorites', key);
+    let data = dbPromise.then(function(db) {
+        var tx = db.transaction('favorites', 'readonly');
+        var store = tx.objectStore('favorites');
+        return store.getAll();
+    }).then(function(items) {
+        console.log('Data yang diambil: ');
+        console.log(items);
+        return items;
+    }).catch(err => console.error(err));
+
+    return data;
 }
 
 async function countDataInDB(key) {
@@ -32,7 +42,7 @@ function createDataToDB(val) {
     dbPromise.then(function(db) {
         var tx = db.transaction('favorites', 'readwrite');
         var store = tx.objectStore('favorites');
-        store.add(val); 
+        store.add(val);
         return tx.complete;
     }).then(function() {
         console.log('team added to fav.');
@@ -46,7 +56,7 @@ function deleteDataFromDB(key) {
     dbPromise.then(function(db) {
         var tx = db.transaction('favorites', 'readwrite');
         var store = tx.objectStore('favorites');
-        store.delete(key); 
+        store.delete(key);
         return tx.complete;
     }).then(function() {
         console.log('team deleted from fav.');

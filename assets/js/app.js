@@ -3,7 +3,11 @@ async function loadStandings() {
     initDB();
 }
 
-async function loadDataFromCaches(proxy, base_url){
+async function loadFavoritesPage() {
+    await renderFavoritesPage();
+}
+
+async function loadDataFromCaches(proxy, base_url) {
     let cachesData = {};
 
     await caches.match(proxy + base_url).then(response => {
@@ -69,7 +73,7 @@ async function renderTeamInfo(teamId) {
     if ("caches" in window) {
         let proxy = 'https://cors-anywhere.herokuapp.com/';
         let base_url = `api.football-data.org/v2/teams/${teamId}`;
-        teamData = await loadDataFromCaches(proxy. base_url);
+        teamData = await loadDataFromCaches(proxy.base_url);
     }
 
     teamData = await getTeam(teamId);
@@ -114,7 +118,7 @@ async function renderTeamInfo(teamId) {
             `;
         });
         squadTable.innerHTML = squadHtml;
-    }else{
+    } else {
         let elem = document.querySelector('#detail-info');
         elem.innerHTML = `<p>Failed to get data</p>`;
         let squadTable = document.querySelector('#team-squad');
@@ -133,7 +137,7 @@ async function loadFav(teamIdFav) {
         elemIcon.innerHTML = 'favorite_border';
         toggleBtn.classList.remove('red');
         status = true;
-    }else{
+    } else {
         //ada di list fav, maka..
         elemIcon.innerHTML = 'favorite';
         toggleBtn.classList.add('red');
@@ -158,10 +162,40 @@ async function toggleFav(teamId) {
             });
             toggleIcon.innerHTML = 'favorite';
             toggleBtn.classList.add('red');
-        }else{
+        } else {
             await deleteDataFromDB(favTeamId);
             toggleIcon.innerHTML = 'favorite_border';
             toggleBtn.classList.remove('red');
         }
+    }
+}
+
+async function renderFavoritesPage() {
+    let favElem = document.getElementById('favorite-data');
+    if (typeof(favElem) != 'undefined' && favElem != null) {
+        let teamData = await getAllDataFromDB();
+        let html = '';
+        if (teamData.length > 0) {
+            teamData.forEach((team, index) => {
+                let teamUrl = team.teamLogo;
+                html += `
+                    <tr onclick="loadTeamPage(${team.teamId})" style="cursor: pointer;">
+                        <td>${index + 1}</td>
+                        <td class="team-logos">
+                            <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}" style="width: 30px;margin-right: 10px;">
+                            <span>${team.teamTitle}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }else{
+            html = `
+            <tr>
+                <td colspan="2">There's no favorites team</td>
+            </tr>
+            `;
+        }
+
+        favElem.innerHTML = html;
     }
 }
