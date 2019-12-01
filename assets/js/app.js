@@ -269,7 +269,9 @@ async function renderFavoritesPage() {
                 html += `
                     <a onclick="loadTeamPage(${team.teamId})" style="cursor: pointer;">
                         <div class="saved-team-card-item">
-                            <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}">
+                            <div class="saved-team-img-wrapper">
+                                <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}">
+                            </div>
                             <p>${team.teamTitle}</p>
                         </div>
                     </a>

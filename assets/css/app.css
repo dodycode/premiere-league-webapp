@@ -146,9 +146,15 @@ body {
 	cursor: pointer;
 }
 
-.saved-team-card-item img{
+.saved-team-img-wrapper{
+	width: 80px;
 	height: 80px;
-	margin-bottom: 6px;
+}
+
+.saved-team-card-item img{
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
 }
 
 .saved-team-card-item p{
@@ -220,9 +226,18 @@ body {
 	}
 	.detail-logo-wrapper{
 		text-align: center;
+		width: 100px;
 	}
 	.detail-logo-wrapper img{
-		width: 80%;
-		margin: 0 auto;
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		margin: 10px auto;
+	}
+	.saved-team-card{
+		justify-content: space-between;
+	}
+	.detail-logo-info p{
+		line-height: inherit;
 	}
 }
