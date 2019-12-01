@@ -128,6 +128,40 @@ body {
 	width: 155px;
 }
 
+.saved-team-card{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.team-card.saved-team-card{
+	padding: 40px;
+}
+
+.saved-team-card-item{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 0 17px;
+	cursor: pointer;
+}
+
+.saved-team-card-item img{
+	height: 80px;
+	margin-bottom: 6px;
+}
+
+.saved-team-card-item p{
+	max-width: 100px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.toast-bg{
+	background-color: #37003D;
+}
+
 @media screen and (min-width: 601px) {
 	nav, nav .nav-wrapper i, nav a.sidenav-trigger, nav a.sidenav-trigger i {
 		height: 70px !important;

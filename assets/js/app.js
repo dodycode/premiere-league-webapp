@@ -248,10 +248,12 @@ async function toggleFav(teamId) {
             });
             toggleIcon.innerHTML = 'favorite';
             toggleBtn.classList.add('red');
+            M.toast({html: 'Team added to favorite!', classes: 'toast-bg'});
         } else {
             await deleteDataFromDB(favTeamId);
             toggleIcon.innerHTML = 'favorite_border';
             toggleBtn.classList.remove('red');
+            M.toast({html: 'Team removed from favorite!', classes: 'toast-bg'});
         }
     }
 }
@@ -265,20 +267,17 @@ async function renderFavoritesPage() {
             teamData.forEach((team, index) => {
                 let teamUrl = team.teamLogo;
                 html += `
-                    <tr onclick="loadTeamPage(${team.teamId})" style="cursor: pointer;">
-                        <td>${index + 1}</td>
-                        <td class="team-logos">
-                            <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}" style="width: 30px;margin-right: 10px;">
-                            <span>${team.teamTitle}</span>
-                        </td>
-                    </tr>
+                    <a onclick="loadTeamPage(${team.teamId})" style="cursor: pointer;">
+                        <div class="saved-team-card-item">
+                            <img src="${teamUrl.replace(/^http:\/\//i, 'https://')}">
+                            <p>${team.teamTitle}</p>
+                        </div>
+                    </a>
                 `;
             });
         } else {
             html = `
-            <tr>
-                <td colspan="2">There's no favorites team</td>
-            </tr>
+                <p>There's no favorites team</p>
             `;
         }
 
