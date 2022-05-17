@@ -22,7 +22,7 @@ let urlToCache = [
     {url: '/assets/img/icon.png', revision: 1}
 ];
 
-let proxy = 'https://cors-anywhere.herokuapp.com/';
+let proxy = 'https://dodycode-cors-anywhere.vercel.app/';
 
 let imageUrl = 'https://upload.wikimedia.org/';
 

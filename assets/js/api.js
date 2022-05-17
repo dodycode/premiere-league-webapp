@@ -19,7 +19,7 @@ function error(error) {
 }
 
 async function getStandings() {
-    let proxy = 'https://cors-anywhere.herokuapp.com/';
+    let proxy = 'https://dodycode-cors-anywhere.vercel.app/';
     let standings = {};
     let options = {
         headers: {
@@ -50,7 +50,7 @@ async function loadDetailTeamPage() {
 }
 
 async function getTeam(teamId) {
-    let proxy = 'https://cors-anywhere.herokuapp.com/';
+    let proxy = 'https://dodycode-cors-anywhere.vercel.app/';
     let options = {
         headers: {
             'Content-Type': 'application/json',

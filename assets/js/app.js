@@ -111,7 +111,7 @@ async function renderStandings() {
         let standings = {};
         let html = "";
         if ("caches" in window) {
-            let proxy = 'https://cors-anywhere.herokuapp.com/';
+            let proxy = 'https://dodycode-cors-anywhere.vercel.app/';
             let base_url = `api.football-data.org/v2/competitions/2021/standings?standingType=TOTAL`;
             standings = await loadDataFromCaches(proxy, base_url);
         }
@@ -157,7 +157,7 @@ async function renderTeamInfo(teamId) {
     let teamData = {};
 
     if ("caches" in window) {
-        let proxy = 'https://cors-anywhere.herokuapp.com/';
+        let proxy = 'https://dodycode-cors-anywhere.vercel.app/';
         let base_url = `api.football-data.org/v2/teams/${teamId}`;
         teamData = await loadDataFromCaches(proxy.base_url);
     }
